@@ -118,7 +118,7 @@ class AdminIntegrationTokenTest extends WebapiAbstract
     public function testUserWithAvailableUnconfigured2fa()
     {
         $userId = $this->getUserId();
-        $this->tfa->getProviderByCode(Google::CODE)->activate($userId);
+        $this->tfa->getProviderByCode(Google::CODE)->resetConfiguration($userId);
         $serviceInfo = $this->buildServiceInfo();
 
         try {
@@ -132,8 +132,9 @@ class AdminIntegrationTokenTest extends WebapiAbstract
                 $message = $e->getMessage();
             } else {
                 $message = $response['message'];
-                self::assertCount(1, $response['parameters']['active_providers']);
-                self::assertSame('google', $response['parameters']['active_providers'][0]);
+                self::assertCount(0, $response['parameters']['active_providers']);
+                self::assertCount(1, $response['parameters']['providers']);
+                self::assertSame('google', $response['parameters']['providers'][0]);
             }
 
             self::assertSame(
